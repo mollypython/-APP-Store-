@@ -1,0 +1,42 @@
+import requests
+import pandas as pd
+from pandas import DataFrame
+from google.colab import drive
+drive.mount('/content/drive')
+flag = [1,2,3,4,5,6,7,8,9,10]
+urllist = []
+for i in flag:
+    url = f"https://itunes.apple.com/rss/customerreviews/page={i}/id=333206289/sortby=mostrecent/json?l=en&&cc=cn"
+    urllist.append(url)
+rating = [] #评分
+title = [] #标题
+content = [] #内容
+for url in urllist:
+    res = requests.get(url)
+    data = res.json()['feed']['entry']
+    for i in range(len(data)):
+        rating.append(data[i]['im:rating']['label'])
+        title.append(data[i]['title']['label'])
+        content.append(data[i]['content']['label'])
+data = {'打分':rating,
+       '标题':title,
+       '内容':content
+       }
+df = DataFrame(data)
+df.to_excel('/content/drive/My Drive/paypal.xlsx')
+print(df)
+#####################################################################################
+    打分                    标题                                                 内容
+0    5     Tiktok from Niamh  The best app in the world seriously this app i...
+1    5                  star                                            awesome
+2    1  I don’t like tiki ok                                      Tiktok is bad
+3    5                  Cade  TikTok made my day it is the best app but I ho...
+4    5                 Hello  Tik tok is amazing and I love it I wish I coul...
+..  ..                   ...                                                ...
+495  5                TikTok  All round the app is well build and perfect fo...
+496  5    The Amazing TIKTOK                5 stars ❤️enfactuated with this app
+497  5                TikTok  I love TikTok so much bc you can be creative w...
+498  5               AMAZING                                      Best app ever
+499  5               Awesome                   Great app to use when your bored
+
+[500 rows x 3 columns]
